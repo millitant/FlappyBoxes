@@ -11,7 +11,7 @@ var mainState = {
     //This function will execture at the beginning of the game
     //Here we'll load all of our assets(art, music, etc) 
    
-   game.stage.backgroundColor = "#71c5cf";
+   game.stage.backgroundColor = "black";
    
    game.load.image('bird', 'assets/bird.png');
    
@@ -51,6 +51,11 @@ var mainState = {
     var spaceKey= this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spaceKey.onDown.add(this.jump, this);
     
+    
+    
+    this.score=0;
+    
+    this.labelScore = game.add.text(20,20, "0", {font:"30px Arial", fill: "#ffffff"});    
   },
   
   update: function () {
@@ -60,11 +65,16 @@ var mainState = {
    if (this.bird.inWorld == false) {
    this.restartGame();  
   }  
+  
+ game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this); 
+  
+ 
+  
   },
   
   addOnePipe: function (x,y) {
    //Get the first dead pipe
-   var pipe=this.pipes.getFirstDead();
+   var pipe = this.pipes.getFirstDead();
    
    //Set x and y values of the pipe
    pipe.reset(x,y);
@@ -73,12 +83,13 @@ var mainState = {
    pipe.body.velocity.x = -200;
    
    //Kill the pipe if it's off the screen at any point
-   pipe.checkWorldBound = true;
-   pipe.outOfBoundSkill= true;   
+   pipe.checkWorldBounds = true;
+   pipe.outOfBoundsKill= true;
+      
   },
   
   addRowOfPipes: function () {
-    var hole = Math.floor(Math.ramdom() * 5) + 1;
+    var hole = Math.floor(Math.random() * 5) + 1;
     
     
     for(var i = 0; i < 8; i++)
@@ -87,6 +98,9 @@ var mainState = {
        
     this.addOnePipe(400, i*60 + 10);          
     }
+    
+    this.score += 1;
+    this.labelScore.text = this.score;
 },
   
   jump: function () {
